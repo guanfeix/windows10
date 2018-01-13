@@ -1,0 +1,105 @@
+{%extends "base_goods.html"%}
+<!--1.注释的块仍然会被解析-->
+{%block more%}
+<span>></span>
+        <a href="/goods/detail/?id={{goods.id}}">商品详情</a>
+{%endblock more%}
+
+{%block a%}
+
+	<div class="goods_detail_con clearfix">
+		<div class="goods_detail_pic fl"><img src="/static/{{goods.pic}}" width="352" height="351"></div>
+
+		<div class="goods_detail_list fr">
+			<h3>{{goods.title}}</h3>
+			<p>{{goods.profile}}</p>
+			<div class="prize_bar">
+				<span class="show_pirze">¥<em>{{goods.price}}</em></span>
+				<span class="show_unit">单  位：500g</span>
+			</div>
+			<div class="goods_num clearfix">
+				<div class="num_name fl">数 量：</div>
+				<div class="num_add fl">
+					<input type="text" class="num_show fl" value="1">
+					<a href="javascript:;" class="add fr">+</a>
+					<a href="javascript:;" class="minus fr">-</a>	
+				</div> 
+			</div>
+			<div class="total">总价：<em>{{goods.price}}元</em></div>
+			<div class="operate_btn">
+				<a href="javascript:;" class="buy_btn">立即购买</a>
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+			</div>
+		</div>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					<li>
+						<a href="/goods/detail/?id={{goods_latest.id}}"><img src="/static/{{goods_latest.pic}}"></a>
+						<h4><a href="/goods/detail/?id={{goods_latest.id}}">{{goods_latest.title}}</a></h4>
+						<div class="prize">￥{{goods_latest.price}}</div>
+					</li>
+					<li>
+						<a href="/goods/detail/?id={{goods_secondary.id}}"><img src="/static/{{goods_secondary.pic}}"></a>
+						<h4><a href="/goods/detail/?id={{goods_secondary.id}}">{{goods_secondary.title}}</a></h4>
+						<div class="prize">￥{{goods_secondary.price}}</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<ul class="detail_tab clearfix">
+				<li class="active">商品介绍</li>
+				<li>评论</li>
+			</ul>
+			<script type="text/javascript" src='/static/tiny_mce/tiny_mce.js'></script>
+			<div class="tab_content">
+				<dl>
+					<dt>商品详情：</dt>
+					<!--2.富文本编辑器的用法引入js初始化-->
+					 <script type="text/javascript">
+						tinyMCE.init({
+							'mode':'textareas',
+							"theme":"simple",
+							'width':'800',
+							'height':'2000',
+						});
+					</script>
+					<textarea name="" id="" cols="30" rows="10">{{goods.description}}</textarea>
+
+			</div>
+
+		</div>
+	</div>
+
+
+	<div class="add_jump"></div>
+
+	<script type="text/javascript" src="/static/js/jquery-1.12.2.js"></script>
+	<script type="text/javascript">
+		var $add_x = $('#add_cart').offset().top;
+		var $add_y = $('#add_cart').offset().left;
+
+		var $to_x = $('#show_count').offset().top;
+		var $to_y = $('#show_count').offset().left;
+
+		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+		$('#add_cart').click(function(){
+			$(".add_jump").stop().animate({
+				'left': $to_y+7,
+				'top': $to_x+7},
+				"fast", function() {
+					$(".add_jump").fadeOut('fast',function(){
+						$('#show_count').html(2);
+					});
+
+			});
+		})
+	</script>
+{%endblock a%}
+

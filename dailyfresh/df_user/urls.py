@@ -9,5 +9,6 @@ urlpatterns = [
     path("info/",views.user_info,name="user_info"),
     path("order/",views.user_order,name="user_order"),
     path("site/",views.user_site,name="user_site"),
+    path("logout/", views.logout, name="logout")
 ]
 app_name = "df_user"

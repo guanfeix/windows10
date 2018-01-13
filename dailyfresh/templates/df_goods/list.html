@@ -1,0 +1,60 @@
+{%extends "base_goods.html"%}
+<!--注释的块仍然会被解析-->
+{%block a%}
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					<li>
+						<a href="/goods/detail/?id={{goods_latest.id}}"><img src="/static/{{goods_latest.pic}}"></a>
+						<h4><a href="/goods/detail/?id={{goods_latest.id}}">{{goods_latest.title}}</a></h4>
+						<div class="prize">￥{{goods_latest.price}}</div>
+					</li>
+					<li>
+						<a href="/goods/detail/?id={{goods_secondary.id}}"><img src="/static/{{goods_secondary.pic}}"></a>
+						<h4><a href="/goods/detail/?id={{goods_secondary.id}}">{{goods_secondary.title}}</a></h4>
+						<div class="prize">￥{{goods_secondary.price}}</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href="/goods/list_1_0/?id={{classify.id}}" {%if sort == 0 %}class="active"{%endif%}>默认</a>
+				<a href="/goods/list_1_1/?id={{classify.id}}" {%if sort == 1 %}class="active"{%endif%}>价格</a>
+				<a href="/goods/list_1_2/?id={{classify.id}}" {%if sort == 2 %}class="active"{%endif%}>人气</a>
+			</div>
+
+			<ul class="goods_type_list clearfix">
+				{%for goods in page%}
+				<li>
+					<a href="/goods/detail/?id={{goods.id}}"><img src="/static/{{goods.pic}}"></a>
+					<h4><a href="/goods/detail/?id={{goods.id}}">{{goods.title}}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{goods.price}}</span>
+						<span class="unit">{{goods.title}}/500g</span>
+						<a href="/goods/detail/" class="add_goods" title="加入购物车"></a>
+					</div>
+				</li>
+				{%endfor%}
+			</ul>
+
+			<div class="pagenation">
+				{%if page.has_previous%}
+				<a href="/goods/list_{{page.previous_page_number}}_{{sort}}/?id={{classify.id}}" >上一页</a>
+				{%endif%}
+				{%for n in paginator.page_range%}
+				<a href="/goods/list_{{n}}_{{sort}}/?id={{classify.id}}" {%if page.number == n%} class="active"{%endif%}>{{n}}</a>
+				{%endfor%}
+				{%if page.has_next%}
+				<a href="/goods/list_{{page.next_page_number}}_{{sort}}/?id={{classify.id}}" >next</a>
+				{%endif%}
+			</div>
+		</div>
+	</div>
+
+
+{%endblock a%}
