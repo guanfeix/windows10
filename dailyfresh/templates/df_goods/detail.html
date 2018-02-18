@@ -1,10 +1,12 @@
 {%extends "base_goods.html"%}
 <!--1.注释的块仍然会被解析-->
+{%block title%}
+天天生鲜-{{goods.title}}
+{%endblock title%}
 {%block more%}
 <span>></span>
-        <a href="/goods/detail/?id={{goods.id}}">商品详情</a>
+<a href="/goods/detail/?id={{goods.id}}">商品详情</a>
 {%endblock more%}
-
 {%block a%}
 
 	<div class="goods_detail_con clearfix">
@@ -20,15 +22,18 @@
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
 				<div class="num_add fl">
-					<input type="text" class="num_show fl" value="1">
+					<input type="text" class="num_show fl" value="1" id="txt1">
 					<a href="javascript:;" class="add fr">+</a>
-					<a href="javascript:;" class="minus fr">-</a>	
-				</div> 
+					<a href="javascript:;" class="minus fr">-</a>
+				</div>
+
 			</div>
-			<div class="total">总价：<em>{{goods.price}}元</em></div>
+			<br>
+			<div><span class="goods_detail_stocks">库存: <span>{{goods.stocks}}</span></span></div>
+			<div class="total">总价：<em>{{goods.price}}</em>￥</div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
 			</div>
 		</div>
 	</div>
@@ -77,29 +82,101 @@
 		</div>
 	</div>
 
-
 	<div class="add_jump"></div>
 
-	<script type="text/javascript" src="/static/js/jquery-1.12.2.js"></script>
+	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript">
+		$(function(){
+			$.get("/add_1_0/",function(data){
+			$('#show_count').html(data.count);
+			})
+		});
+
+		$("#add_cart").click(function(event) {
+				goods_id = {{goods.id}}
+				count = $("#txt1").val()
+				$user_index = $(".login_btn").text().indexOf("退出")
+				if($user_index==-1){
+					alert("请登录后购买"+$user_index)
+					location.href="/user/login/"
+					return
+				}
+				$.get("/add"+"_"+goods_id+"_"+count+"/",function(data){
+				$('#show_count').html(data.count);})
+
+
+		});
+
+		$(".buy_btn").click(function(event) {
+			goods_id = {{goods.id}}
+			count = $("#txt1").val()
+			location.href="/buy_"+goods_id+"_"+count+"/"
+		});
+
+
+
 		var $add_x = $('#add_cart').offset().top;
 		var $add_y = $('#add_cart').offset().left;
 
 		var $to_x = $('#show_count').offset().top;
 		var $to_y = $('#show_count').offset().left;
 
-		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+
 		$('#add_cart').click(function(){
+		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 			$(".add_jump").stop().animate({
 				'left': $to_y+7,
 				'top': $to_x+7},
 				"fast", function() {
-					$(".add_jump").fadeOut('fast',function(){
-						$('#show_count').html(2);
-					});
+					$(".add_jump").fadeOut('fast');
 
 			});
 		})
+
+	</script>
+	<script type="text/javascript">
+	$(function(){
+		total();
+		var txt1 = $("#txt1")
+		$(".add").click(function() {
+				var val = txt1.val()
+				txt1.val(parseInt(val)+1).blur()
+				total()
+			});
+		$(".minus").click(function(event) {
+			var val = txt1.val()
+			if (val>1){txt1.val(parseInt(val)-1).blur()}
+			total()
+		});
+	})
+
+	function total(){
+		var $sum = $(".total em")
+		var $price = $(".show_pirze em").text()
+		var $count = $("#txt1").val()
+		$sum.html(($price*$count).toFixed(2))
+	}
+
+	$(".num_show").blur(function(){
+        count = $(this).val();
+        stocks = $(".goods_detail_stocks span").text()
+        if(count<=0){
+            alert("请输入正确的数量");
+            $(this).val(1)
+            $(this).focus();
+            return;
+        }else if(count>100){
+            alert("单个用户最多购买100份");
+            $(this).val(100)
+            $(this).focus();
+            return;
+        }else if(count>=parseInt(stocks)){
+            alert("库存不足");
+            $(this).val(stocks)
+            $(this).focus();
+            return;
+        }
+    });
 	</script>
 {%endblock a%}
 

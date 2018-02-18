@@ -1,129 +1,156 @@
 $(function(){
-
-	var error_name = false;
-	var error_password = false;
-	var error_check_password = false;
-	var error_email = false;
-	var error_check = false;
-
-
-	$('#user_name').blur(function() {
-		check_user_name();
-	});
-
-	$('#pwd').blur(function() {
-		check_pwd();
-	});
-
-	$('#cpwd').blur(function() {
-		check_cpwd();
-	});
-
-	$('#email').blur(function() {
-		check_email();
-	});
-
-	$('#allow').click(function() {
-		if($(this).is(':checked'))
-		{
-			error_check = false;
-			$(this).siblings('span').hide();
+	$("reg_form").submit(function(){
+		check_username()
+		check_pwd()
+		check_cpwd()
+		check_email()
+		if(error_name== false && error_pwd== false && error_cpwd== false && error_email== false && error_allow==false){
 		}
-		else
-		{
-			error_check = true;
-			$(this).siblings('span').html('请勾选同意');
-			$(this).siblings('span').show();
+		else{
+			return false
+		}
+	})
+	var error_name = false
+	var error_pwd = false
+	var error_cpwd = false
+	var error_email = false
+	var error_allow = true
+
+	$("#user_name").blur(function(){
+		check_username()
+	})
+	$("#user_name").focus(function(){
+		$(this).next().hide()
+	})
+	$("#pwd").blur(function(){
+		check_pwd()
+	})
+	$("#pwd").focus(function(){
+		$(this).next().hide()
+	})
+	$("#cpwd").blur(function(){
+		check_cpwd()
+	})
+	$("#cpwd").focus(function(){
+		$(this).next().hide()
+	})
+	$("#email").blur(function(){
+		check_email()
+	})
+	$("#email").focus(function(){
+		$(this).next().hide()
+	})
+
+
+
+	$("#allow").click(function(event){
+		if($(this).prop("checked")==true){
+			error_allow = false
+			$(".error_tip2").hide()
+		}
+		else{
+			error_allow = true
+			$(".error_tip2").html("请仔细阅读协议")
+			$(".error_tip2").show()
 		}
 	});
 
+	function check_email(){
 
-	function check_user_name(){
-		var len = $('#user_name').val().length;
-		if(len<5||len>20)
-		{
-			$('#user_name').next().html('请输入5-20个字符的用户名')
-			$('#user_name').next().show();
-			error_name = true;
+		var val = $("#email").val()
+
+		var re = /^\w+@\w+(\.com)$/
+
+		if(val==""){
+			$("#email").next().html("请输入邮箱");
+			$("#email").next().show();
+			error_email = true
+			return
 		}
-		else
-		{
-			$('#user_name').next().hide();
-			error_name = false;
+		if(re.test(val)){
+			error_email = false
+		}
+		else{
+			$("#email").next().html("请使用正确的邮箱格式");
+			$("#email").next().show();
+			error_email = true
+			return
+		}
+
+	}
+
+//
+
+
+
+	function check_cpwd(){
+		var val1 = $("#pwd").val()
+		var val2 = $("#cpwd").val()
+		// alert(val2+"|"val1)
+		if(val1!=val2){
+			error_cpwd = true
+			$("#cpwd").next().html("两次输入的密码应相等");
+			$("#cpwd").next().show();
+		}
+		else{
+			$("#cpwd").next().hide();
 		}
 	}
 
 	function check_pwd(){
-		var len = $('#pwd').val().length;
-		if(len<8||len>20)
-		{
-			$('#pwd').next().html('密码最少8位，最长20位')
-			$('#pwd').next().show();
-			error_password = true;
+
+		var val = $("#pwd").val()
+		// 1.出现这样神奇的bug怎么不让人崩溃，如此不严谨的语言，万能的是过一会自己好了玄学
+
+		var re = /^[\w@%&\!\#\$\*\^\.\?]{8,16}$/
+
+		if(val==""){
+			$("#pwd").next().html("请输入密码");
+			$("#pwd").next().show();
+			error_pwd = true
+			return
 		}
-		else
-		{
-			$('#pwd').next().hide();
-			error_password = false;
-		}		
-	}
-
-
-	function check_cpwd(){
-		var pass = $('#pwd').val();
-		var cpass = $('#cpwd').val();
-
-		if(pass!=cpass)
-		{
-			$('#cpwd').next().html('两次输入的密码不一致')
-			$('#cpwd').next().show();
-			error_check_password = true;
+		// 2.不熟悉就多用几下无所谓的，只要你想到的时候知道去哪找就行了不做复读机，是internal
+		if(re.test(val)){
+			error_pwd = false
 		}
-		else
-		{
-			$('#cpwd').next().hide();
-			error_check_password = false;
-		}		
-		
-	}
+		else{
+			$("#pwd").next().html("密码应为8-16位字符");
+			$("#pwd").next().show();
+			error_pwd = true
+			return
 
-	function check_email(){
-		var re = /^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$/;
-
-		if(re.test($('#email').val()))
-		{
-			$('#email').next().hide();
-			error_email = false;
-		}
-		else
-		{
-			$('#email').next().html('你输入的邮箱格式不正确')
-			$('#email').next().show();
-			error_check_password = true;
 		}
 
 	}
 
+	//
+	function check_username(){
 
-	$('#reg_form').submit(function() {
-		check_user_name();
-		check_pwd();
-		check_cpwd();
-		check_email();
+		var val = $("#user_name").val()
+		// 1.出现这样神奇的bug怎么不让人崩溃，如此不严谨的语言，万能的是过一会自己好了玄学
 
-		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false)
-		{
-			return true;
+		var re = /^\w{5,15}$/
+
+		if(val==""){
+			$("#user_name").next().html("请输入用户名");
+			$("#user_name").next().show();
+			error_name = true
+			return
 		}
-		else
-		{
-			return false;
+		// 2.不熟悉就多用几下无所谓的，只要你想到的时候知道去哪找就行了不做复读机，是internal
+		if(re.test(val)){
+			error_name = false
+		}
+		else{
+			$("#user_name").next().html("用户名是使用alpha的5到15位字符");
+			$("#user_name").next().show();
+			error_name = true
+			return
+
 		}
 
-	});
-
-
-
+	}
 
 
 

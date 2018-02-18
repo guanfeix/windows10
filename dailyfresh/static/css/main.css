@@ -121,6 +121,7 @@ html,body{height:100%}
 .list_model{width:1200px;height:340px;margin:15px auto 0;}
 .list_title{height:40px;border-bottom:2px solid #42ad46}
 .list_title h3{height:40px;line-height:40px;font-size:16px;color:#37ab40;font-weight:bold;}
+.list_title h3 a{color:#37ab40;}
 .list_title .subtitle{height:20px;line-height:20px;margin-top:15px;}
 .list_title .subtitle span{color:#666;margin:0 10px 0 20px;}
 .list_title .subtitle a{color:#666;margin:0 5px;}
@@ -251,7 +252,7 @@ html,body{height:100%}
 .goods_num .num_add .add,.goods_num .num_add .minus{width:25px;line-height:25px;text-align:center;border-left:1px solid #ddd;border-bottom:1px solid #ddd;color:#666;font-size:14px}
 .goods_num .num_add .minus{border-bottom:0px}
 
-.total{height:35px;line-height:35px;margin-top:25px;}
+.total{height:25px;line-height:25px;margin-top:15px;}
 .total em{font-style:normal;color:#ff3e3e;font-size:18px}
 
 .operate_btn{height:40px;margin-top:35px;font-size:0;position:relative;}
@@ -259,6 +260,7 @@ html,body{height:100%}
 .operate_btn .add_cart{background-color:#c40000;color:#fff;margin-left:10px;position:relative;z-index:10;}
 
 .add_jump{width:20px;height:20px;background-color:#c40000;position:absolute;left:268px;top:10px;border-radius:50%;z-index:9;display:none;}
+.add_jump2{width:20px;height:20px;background-color:#c40000;border-radius:50%;z-index:9;display:none;}
 
 .detail_tab{
 	height:35px;
@@ -636,7 +638,25 @@ html,body{height:100%}
 	cursor:pointer;
 	font-family:'Microsoft Yahei'
 }
+.list_model .model01 a{
+    text-decoration:none;
+}
 
 .stress{
 	color:#ff8800;
+}
+.cart_list_td .col03 span{
+        font-size:16px;
+        color:red;
+}
+.goods_detail_list .goods_detail_stocks{
+        font-size:16px;
+        color:red;
+        mar
+}
+.settlements .col04 input{
+        border: 0;
+        height:70px;
+        width:165px;
+
 }

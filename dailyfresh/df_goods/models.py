@@ -12,7 +12,6 @@ class ClassifyInfo(models.Model):
         return self.title
 
 
-
 class GoodsInfo(models.Model):
     title = models.CharField(max_length=20)
     pic = models.ImageField(upload_to="media")
@@ -21,7 +20,7 @@ class GoodsInfo(models.Model):
     unit = models.CharField(max_length=20,default="500g")
     popularity = models.IntegerField(default=12,auto_created=True)
     sales = models.IntegerField(default=50,auto_created=True)
-    stocks = models.DecimalField(max_digits=10,decimal_places=2,default=500)
+    stocks = models.IntegerField(default=500)
     profile = models.CharField(max_length=200,default="delicious")
     description = HTMLField(max_length=5000,default="delicious")
     comment = models.TextField(default="delicious")

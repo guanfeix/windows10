@@ -1,8 +1,20 @@
 {%extends "base_user.html"%}
 <!--注释的块仍然会被解析-->
 {%block title%}
-{{title}}
+天天生鲜-{{title}}
 {%endblock title%}
+{%block utitle%}
+		<form action="/goods/search/">
+			<div class="search_con fl">
+				<input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+				<input type="submit" class="input_btn fr" name="" value="搜索">
+			</div>
+		</form>
+		<div class="guest_cart fr">
+			<a href="/cart/" class="cart_name fl">我的购物车</a>
+			<div class="goods_count fl" id="show_count">0</div>
+		</div>
+{%endblock utitle%}
 {%block head%}
 <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
@@ -53,7 +65,7 @@
 
 	<div class="list_model">
 		<div class="list_title clearfix">
-			<h3 class="fl" id="model01"><a href="/goods/list_1_0/?id={{list.c1.0.id}}">{{list.c1.0.title}}</a></h3>
+			<h3 class="fl model01" id="model01"><a href="/goods/list1_1_0/?id={{list.c1.0.id}}">{{list.c1.0.title}}</a></h3>
 			<div class="subtitle fl">
 				<span>|</span>
 				<a href="/goods/detail/?id={{goods_latest.id}}">California {{goods_latest.title}}</a>
@@ -302,6 +314,14 @@
 			window.location.href = 'list.html';
 		}
 	</script>
+
+<script type="text/javascript">
+	$(function(){
+			$.get("/add_1_0/",function(data){
+			$('#show_count').html(data.count);
+			})
+		});
+</script>
 
 {%endblock goods%}
 

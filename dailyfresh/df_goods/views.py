@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from .models import *
+from datetime import date
+
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.core.paginator import Paginator
-# Create your views here.
-from .decorator import coat
+
 
 def index(request):
 
@@ -35,11 +36,12 @@ def index(request):
     url = request.get_full_path()
     response.set_cookie("url", value=url)
 
-    # return response
+    return response
     # print(context["fruit_04"][3].title)
-    return render(request,"df_goods/index.html",context)
+    # return render(request,"df_goods/index.html",context)
 
-def list(request,page_id,sort):
+
+def list1(request,page_id,sort):#3.不要用内建函数作为函数名日
     user_name = request.session.get("user_name")
     id = request.GET.get("id")
     classify = ClassifyInfo.objects.filter(pk=id)
@@ -72,10 +74,12 @@ def list(request,page_id,sort):
 
     return response
 
+
 def detail(request):
     user_name = request.session.get("user_name")
 
     id = request.GET.get("id")
+
     goods = GoodsInfo.objects.get(pk=id)
     news = goods.classify.goodsinfo_set.order_by("-pk")
     goods.popularity += 1
@@ -89,5 +93,60 @@ def detail(request):
 
     url = request.get_full_path()
     response.set_cookie("url", value=url)
+    list_str = request.COOKIES.get("recent_list_str")
+
+
+    if list_str is not None:
+        recent_list =list_str.split(",")
+
+        if str(id) not in recent_list:
+            if len(recent_list)==5:
+                recent_list.pop()
+                # del recent_list[4]
+                # recent_list = list(set(recent_list))
+                #用序列好像失序了不能很好的控制顺序，这倒罢了但是不能替换最老的浏览这就是问题了
+                # ,几经删减程序就很健壮了，不同的环境，耦合性会降低
+        else:
+            recent_list.remove(str(id))
+        recent_list.insert(0, str(id))
+        recent_list_str =",".join(recent_list)
+
+    else:
+        recent_list_str = str(id)
+
+    print("recent_list_str", recent_list_str)
+    response.set_cookie("recent_list_str",recent_list_str)
 
     return response
+
+
+from haystack.views import SearchView
+
+
+class FacetedSearchView(SearchView):
+    def extra_context(self):
+
+        extra = super(FacetedSearchView, self).extra_context()
+        extra["title"] = "搜索"
+        extra["user_name"] = "user_name"
+
+        return extra
+
+
+# from haystack.generic_views import SearchView
+#
+#
+# class MySearchView(SearchView):
+#     """My custom search view."""
+#
+#     def get_queryset(self):
+#         queryset = super(MySearchView, self).get_queryset()
+#         # further filter queryset based on some set of criteria
+#         return queryset.filter(pub_date__gte=date(2015, 1, 1))
+#
+#     def get_context_data(self, *args, **kwargs):
+#         extra = super(MySearchView, self).get_context_data(*args, **kwargs)
+#
+#         extra["title"] = "搜索"
+#         extra["user_name"] = "user_name"
+#         return extra

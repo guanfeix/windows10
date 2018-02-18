@@ -21,5 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("user/",include("df_user.urls",namespace="df_user")),
     path("goods/",include("df_goods.urls",namespace="df_goods")),
-    path('tinymce/', include('tinymce.urls',),)
+    path('tinymce/', include('tinymce.urls',),),
+    path("",include("df_cart.urls",namespace="df_cart")),
+    path("",include("df_order.urls",namespace="df_order")),
+    # path("search/", include("haystack.urls")),
 ]

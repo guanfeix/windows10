@@ -12,7 +12,7 @@
 				</div>
 				<div class="login_btn fl">
 					{%block logout%}
-					{%if user_name is not None%}
+					{%if user_name is not None%}{#1.或者用管道if uer_name|default:"" !=""#}
 					<a href="/user/info/">{{user_name}}</a>
 					<span>|</span>
 					<a href="/user/logout/">退出</a>
@@ -28,9 +28,9 @@
 					<span>|</span>
 					<a href="/user/info/">用户中心</a>
 					<span>|</span>
-					<a href="cart.html">我的购物车</a>
+					<a href="/cart/">我的购物车</a>
 					<span>|</span>
-					<a href="/user/order/">我的订单</a>
+					<a href="/order/">我的订单</a>
 				</div>
 			</div>
 		</div>
@@ -38,29 +38,25 @@
 
 	<div class="search_bar clearfix">
 		<a href="/goods/index/" class="logo fl"><img src="/static/images/logo.png"></a>
-		{%if page_name == 0%}
-		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
-		{%endif%}
-		<div class="search_con fr">
-			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
-			<input type="button" class="input_btn fr" name="" value="搜索">
-		</div>
-		{%if page_name == 1%}
-		<div class="guest_cart fr">
-			<a href="cart.html" class="cart_name fl">我的购物车</a>
-			<div class="goods_count fl" id="show_count">1</div>
-		</div>
-		{%endif%}
+		{%block utitle%}
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;{%block usercenter%}用户中心{%endblock usercenter%}</div>
+		<form action="/goods/search/">
+			<div class="search_con fl">
+				<input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+				<input type="submit" class="input_btn fr" name="" value="搜索">
+			</div>
+		</form>
+		{%endblock utitle%}
 	</div>
 
-{%if page_name == 0%}
+{%if page_name > 0%}
 	<div class="main_con clearfix">
 		<div class="left_menu_con clearfix">
 			<h3>用户中心</h3>
 			<ul>
-				<li><a href="/user/info/?user={{user}}" class="active">· 个人信息</a></li>
-				<li><a href="/user/order/">· 全部订单</a></li>
-				<li><a href="/user/site/?user={{user}}">· 收货地址</a></li>
+				<li><a href="/user/info/?user={{user}}" {%if page_name == 1%}class="active"{%endif%}>· 个人信息</a></li>
+				<li><a href="/user/order/" {%if page_name == 2%}class="active"{%endif%}>· 全部订单</a></li>
+				<li><a href="/user/site/?user={{user}}"{%if page_name == 3%}class="active"{%endif%}>· 收货地址</a></li>
 			</ul>
 		</div>
         {%block right_content%}

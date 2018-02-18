@@ -1,5 +1,8 @@
 {%extends "base_goods.html"%}
 <!--注释的块仍然会被解析-->
+{%block title%}
+天天生鲜-{{classify.title}}
+{%endblock title%}
 {%block a%}
 
 	<div class="main_wrap clearfix">
@@ -23,9 +26,9 @@
 
 		<div class="r_wrap fr clearfix">
 			<div class="sort_bar">
-				<a href="/goods/list_1_0/?id={{classify.id}}" {%if sort == 0 %}class="active"{%endif%}>默认</a>
-				<a href="/goods/list_1_1/?id={{classify.id}}" {%if sort == 1 %}class="active"{%endif%}>价格</a>
-				<a href="/goods/list_1_2/?id={{classify.id}}" {%if sort == 2 %}class="active"{%endif%}>人气</a>
+				<a href="/goods/list1_1_0/?id={{classify.id}}" {%if sort == 0 %}class="active"{%endif%}>默认</a>
+				<a href="/goods/list1_1_1/?id={{classify.id}}" {%if sort == 1 %}class="active"{%endif%}>价格</a>
+				<a href="/goods/list1_1_2/?id={{classify.id}}" {%if sort == 2 %}class="active"{%endif%}>人气</a>
 			</div>
 
 			<ul class="goods_type_list clearfix">
@@ -36,7 +39,7 @@
 					<div class="operate">
 						<span class="prize">￥{{goods.price}}</span>
 						<span class="unit">{{goods.title}}/500g</span>
-						<a href="/goods/detail/" class="add_goods" title="加入购物车"></a>
+						<a href="javascript:cart_add({{goods.id}},1);" class="add_goods " title="加入购物车"></a>
 					</div>
 				</li>
 				{%endfor%}
@@ -44,17 +47,56 @@
 
 			<div class="pagenation">
 				{%if page.has_previous%}
-				<a href="/goods/list_{{page.previous_page_number}}_{{sort}}/?id={{classify.id}}" >上一页</a>
+				<a href="/goods/list1_{{page.previous_page_number}}_{{sort}}/?id={{classify.id}}" >上一页</a>
 				{%endif%}
 				{%for n in paginator.page_range%}
-				<a href="/goods/list_{{n}}_{{sort}}/?id={{classify.id}}" {%if page.number == n%} class="active"{%endif%}>{{n}}</a>
+				<a href="/goods/list1_{{n}}_{{sort}}/?id={{classify.id}}" {%if page.number == n%} class="active"{%endif%}>{{n}}</a>
 				{%endfor%}
 				{%if page.has_next%}
-				<a href="/goods/list_{{page.next_page_number}}_{{sort}}/?id={{classify.id}}" >next</a>
+				<a href="/goods/list1_{{page.next_page_number}}_{{sort}}/?id={{classify.id}}" >next</a>
 				{%endif%}
 			</div>
 		</div>
 	</div>
+<div class="add_jump"></div>
+<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" >
+		function cart_add(goods_id,count){
+				$user_index = $(".login_btn").text().indexOf("退出")
+				if($user_index==-1){
+					alert("请登录后购买"+$user_index)
+					location.href="/user/login/"
+					return
+				}
+				$.get("/add"+"_"+goods_id+"_"+count+"/",function(data){
+				$('#show_count').html(data.count);
+			})
 
+			};
 
+		var $add_x = $('.add_goods').offset().top;
+		var $add_y = $('.add_goods').offset().left;
+
+		var $to_x = $('#show_count').offset().top;
+		var $to_y = $('#show_count').offset().left;
+
+		$(".add_jump").css({'display':'none'})
+
+		$('.add_goods').click(function(){
+		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+			$(".add_jump").stop().animate({
+				'left': $to_y+7,
+				'top': $to_x+7},
+				"fast", function() {
+					$(".add_jump").fadeOut('fast');
+
+			});
+		})
+
+		$(function(){
+			$.get("/add_1_0/",function(data){
+			$('#show_count').html(data.count);
+			})
+		});
+</script>
 {%endblock a%}

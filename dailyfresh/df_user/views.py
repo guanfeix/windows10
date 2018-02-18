@@ -1,9 +1,13 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
+
 from .models import *
+from df_goods.models import * #0.霸王硬上弓
+from df_order.models import *
+
 from hashlib import sha1
 from .user_decorator import check_login
-from django.core import serializers
 # Create your views here.
 
 
@@ -48,7 +52,7 @@ def login_handle(request):
             url = request.COOKIES["url"]
             print("login-url",url)
             red = HttpResponseRedirect(url)
-            red.set_cookie("uname", value=uname, max_age=300)
+            red.set_cookie("uname", value=uname, max_age=1800)
             # if remember==1:
             #     red.set_cookie("uname",value=uname,max_age=300)
             # else:
@@ -56,11 +60,13 @@ def login_handle(request):
 
             request.session["user_id"] = user.id # 没记忆6.Httprequest 属性类字典对象
             request.session["user_name"] = user.uname
-            request.session.set_expiry(600)
+            request.session.set_expiry(3000)
             # context={"user":user, "page_name": 0}
 
             return red#7.我的写法至少对我来讲是有用的
             # return HttpResponseRedirect("/user/user_center_info/",context)#7.没卵用增加了cookie，session
+        else:
+            return redirect("/user/login/")
     except Exception as e:
         print(e)
         return redirect("/user/login/")
@@ -68,6 +74,10 @@ def login_handle(request):
 
 
 def login(re):
+    user_name = re.session.get("user_name")
+    if user_name:
+        url = re.COOKIES["url"]
+        return HttpResponseRedirect(url)
     return render(re,"df_user/login.html",context={})
 
 
@@ -76,16 +86,38 @@ def user_info(request):
     user_name = request.session.get("user_name")
     id = request.session.get("user_id")
     user = UserInfo.objects.get(pk=id)
-    context = {"user": user, "page_name": 0, "user_name": user_name,}
+    recent_list_str = request.COOKIES.get("recent_list_str")
+    print("recent_list_str",recent_list_str)
+    goodslist = []
+    if recent_list_str:
+        recent_list =recent_list_str.split(",")
+        for id in recent_list:
+            goods = GoodsInfo.objects.get(pk=int(id))
+            goodslist.append(goods)
+    context = {"user": user, "page_name": 1,
+                   "user_name": user_name,"goodslist":goodslist }
     return render(request,"df_user/user_center_info.html",context)
 
+
 @check_login
-def user_order(request):
+def user_order(request,page_id):
     user_name = request.session.get("user_name")
-    id = request.session.get("user_id")
-    user = UserInfo.objects.get(pk=id)
-    context = {"user": user, "page_name": 0, "user_name": user_name,}
+    user_id = request.session.get("user_id")
+
+    orderinfos = OrderInfo.objects.filter(user=user_id)
+
+    # 分页
+    paginator = Paginator(orderinfos,2)
+    page = paginator.page(int(page_id))
+
+    user = UserInfo.objects.get(pk=user_id)
+
+    context = {"user": user, "page_name": 2,
+               "user_name": user_name,
+               "page":page, "paginator":paginator}
     return render(request,"df_user/user_center_order.html",context)
+
+
 @check_login
 def user_site(request):
     # 8.获取数据的几种方式 session，GET,自查（结合了session因为是个变量）都用了。cookie还不会
@@ -103,7 +135,7 @@ def user_site(request):
         user.uphone = request.POST.get("uphone")
         user.uaddress = request.POST.get("uaddress")
         user.save()                 #10.加了新功能撒
-    context = {"user": user, "page_name": 0, "user_name": user_name,}
+    context = {"user": user, "page_name": 3, "user_name": user_name,}
     return render(request,"df_user/user_center_site.html",context)
 
 def logout(request):
