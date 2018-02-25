@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,HttpResponse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,JsonResponse
 from django.core.paginator import Paginator
 
 from .models import *
@@ -35,6 +35,11 @@ def register_handle(request):
     user.save()
     return redirect("/user/login/")#1.重定向是打开一个新的url所以要写匹配的path
 
+def register_exist(request):
+    uname = request.GET.get("uname")
+    count = UserInfo.objects.filter(uname=uname).count()
+    return JsonResponse({"count":count})
+
 
 def login_handle(request):
     post = request.POST
@@ -46,6 +51,9 @@ def login_handle(request):
         s2.update(pwd.encode("utf-8"))
         upwd1 = s2.hexdigest()
         user = UserInfo.objects.get(uname=uname)#3.models class manager -objects django与db交互的接口
+        # 直接报错了没有下面的
+
+
         upwd2 = user.upwd        #5.filte得到[],get None 如果是空数组就会出错，用异常捕捉解决4，5的问题,
 
         if upwd1 == upwd2:
@@ -53,8 +61,8 @@ def login_handle(request):
             print("login-url",url)
             red = HttpResponseRedirect(url)
             red.set_cookie("uname", value=uname, max_age=1800)
-            # if remember==1:
-            #     red.set_cookie("uname",value=uname,max_age=300)
+            if remember==1:
+                red.set_cookie("uname",value=uname,max_age=120)
             # else:
             #     red.set_cookie("uname",value="",max_age=-1)
 
@@ -66,19 +74,22 @@ def login_handle(request):
             return red#7.我的写法至少对我来讲是有用的
             # return HttpResponseRedirect("/user/user_center_info/",context)#7.没卵用增加了cookie，session
         else:
-            return redirect("/user/login/")
+            return render(request,"df_user/login.html",context={"error": 2})
     except Exception as e:
         print(e)
-        return redirect("/user/login/")
+        return render(request,"df_user/login.html",context={"error": 1})
 
 
 
 def login(re):
     user_name = re.session.get("user_name")
+    error = 0
+    uname = re.COOKIES.get("uname","")
     if user_name:
         url = re.COOKIES["url"]
         return HttpResponseRedirect(url)
-    return render(re,"df_user/login.html",context={})
+
+    return render(re,"df_user/login.html",context={"uname":uname,"error":error})
 
 
 @check_login

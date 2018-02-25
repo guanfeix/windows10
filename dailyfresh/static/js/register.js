@@ -1,20 +1,28 @@
 $(function(){
-	$("reg_form").submit(function(){
+
+    var error_name = false
+	var error_pwd = false
+	var error_cpwd = false
+	var error_email = false
+	var error_allow = false
+
+    $("#register").click(function(){
 		check_username()
 		check_pwd()
 		check_cpwd()
 		check_email()
+		alert(error_name+error_pwd+error_cpwd+error_email+error_allow)
+		console.log(error_pwd)
+		document.title = error_name+error_pwd+error_cpwd+error_email+error_allow
+		alert(error_cpwd)
 		if(error_name== false && error_pwd== false && error_cpwd== false && error_email== false && error_allow==false){
+            $("#reg_form").submit()
 		}
 		else{
 			return false
 		}
-	})
-	var error_name = false
-	var error_pwd = false
-	var error_cpwd = false
-	var error_email = false
-	var error_allow = true
+	});
+
 
 	$("#user_name").blur(function(){
 		check_username()
@@ -55,6 +63,10 @@ $(function(){
 		}
 	});
 
+
+
+
+
 	function check_email(){
 
 		var val = $("#email").val()
@@ -93,6 +105,7 @@ $(function(){
 			$("#cpwd").next().show();
 		}
 		else{
+		    error_cpwd = false
 			$("#cpwd").next().hide();
 		}
 	}
@@ -140,7 +153,18 @@ $(function(){
 		}
 		// 2.不熟悉就多用几下无所谓的，只要你想到的时候知道去哪找就行了不做复读机，是internal
 		if(re.test(val)){
-			error_name = false
+			var uname = $("#user_name").val()
+            $.get("/user/exist/?uname="+uname, function(data){
+                  if(data.count==1){
+                    $("#user_name").next().html("用户名已被占用").show()
+                    error_name = true
+                  }
+                  else{
+                    error_name = false
+                    $("#user_name").next().hide()
+                  }
+                });
+
 		}
 		else{
 			$("#user_name").next().html("用户名是使用alpha的5到15位字符");
