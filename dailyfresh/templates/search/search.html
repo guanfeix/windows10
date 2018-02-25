@@ -1,0 +1,97 @@
+{%extends "base_goods.html"%}
+<!--注释的块仍然会被解析-->
+{%block title%}
+天天生鲜-search
+{%endblock title%}
+{%block a%}
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					<li>
+						<a href="/goods/detail/?id={{goods_latest.id}}"><img src="/static/{{goods_latest.pic}}"></a>
+						<h4><a href="/goods/detail/?id={{goods_latest.id}}">{{goods_latest.title}}</a></h4>
+						<div class="prize">￥{{goods_latest.price}}</div>
+					</li>
+					<li>
+						<a href="/goods/detail/?id={{goods_secondary.id}}"><img src="/static/{{goods_secondary.pic}}"></a>
+						<h4><a href="/goods/detail/?id={{goods_secondary.id}}">{{goods_secondary.title}}</a></h4>
+						<div class="prize">￥{{goods_secondary.price}}</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+
+			<ul class="goods_type_list clearfix">
+				{%for goods in page.object_list%}
+				<li>
+					<a href="/goods/detail/?id={{goods.object.id}}"><img src="/static/{{goods.object.pic}}"></a>
+					<h4><a href="/goods/detail/?id={{goods.object.id}}">{{goods.object.title}}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{goods.object.price}}</span>
+						<span class="unit">{{goods.object.price}}/{{goods.object.unit}}</span>
+						<a href="javascript:cart_add({{goods.object.id}},1);" class="add_goods " title="加入购物车"></a>
+					</div>
+				</li>
+				{%endfor%}
+			</ul>
+
+			<div class="pagenation">
+				{%if page.has_previous%}
+				<a href="/search/?q={{query}}&amp;page={{page.previous_page_number}}" >上一页</a>
+				{%endif%}
+				{%for n in paginator.page_range%}
+				<a href="/search/?q={{query}}&amp;page={{n}}" {%if page.number == n%} class="active"{%endif%}>{{n}}</a>
+				{%endfor%}
+				{%if page.has_next%}
+				<a href="/search/?q={{query}}&amp;page={{page.next_page_number}}" >next</a>
+				{%endif%}
+			</div>
+		</div>
+	</div>
+<div class="add_jump"></div>
+<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" >
+		function cart_add(goods_id,count){
+				$user_index = $(".login_btn").text().indexOf("退出")
+				if($user_index==-1){
+					alert("请登录后购买"+$user_index)
+					location.href="/user/login/"
+					return
+				}
+				$.get("/add"+"_"+goods_id+"_"+count+"/",function(data){
+				$('#show_count').html(data.count);
+			})
+
+			};
+
+		var $add_x = $('.add_goods').offset().top;
+		var $add_y = $('.add_goods').offset().left;
+
+		var $to_x = $('#show_count').offset().top;
+		var $to_y = $('#show_count').offset().left;
+
+		$(".add_jump").css({'display':'none'})
+
+		$('.add_goods').click(function(){
+		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+			$(".add_jump").stop().animate({
+				'left': $to_y+7,
+				'top': $to_x+7},
+				"fast", function() {
+					$(".add_jump").fadeOut('fast');
+
+			});
+		})
+
+		$(function(){
+			$.get("/add_1_0/",function(data){
+			$('#show_count').html(data.count);
+			})
+		});
+</script>
+{%endblock a%}

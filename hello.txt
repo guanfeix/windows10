@@ -1,1 +1,6 @@
+<<<<<<< HEAD
 hello world
+=======
+hello git!
+change directory
+>>>>>>> ce67ddbc5af10c7e8065dc7919a35918d7a35dd4
